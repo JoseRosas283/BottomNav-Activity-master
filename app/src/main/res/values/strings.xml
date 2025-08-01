@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Bottom Navigation</string>
+
+    <!-- Textos para la interfaz de Login -->
+    <string name="titulo">Iniciar sesión aquí</string>
+    <string name="subtitulo">¡Bienvenido de nuevo, te \n hemos extrañado!</string>
+    <string name="primerInput">Correo electrónico</string>
+    <string name="segundoInput">Contraseña</string>
+    <string name="enlace">¿Olvidaste tu contraseña?</string>
+    <string name="boton">Iniciar sesión</string>
+    <string name="enlaceRegistro">Crear nueva cuenta</string>
+
+</resources>

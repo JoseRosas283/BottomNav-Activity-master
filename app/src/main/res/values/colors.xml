@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lavender">#8692f7</color>
+    <color name="grey">#d2d2d2</color>
+    <color name="blue">#007AFF</color>
+    <color name="light_gray">#444444</color>
+    <color name="fondoTarjeta">#F5F5F5</color> <!-- fondo de tarjeta limpio y moderno -->
+    <color name="colorAzulGrafica">#3E8ED0</color> <!-- línea de gráfica y sombra -->
+    <color name="colorTextoPrincipal">#212121</color> <!-- títulos, encabezados -->
+    <color name="colorEtiquetaEje">#757575</color> <!-- texto en ejes -->
+    <color name="colorLineasSuaves">#BDBDBD</color> <!-- borde de ejes y líneas guía -->
+    <color name="colorAccento">#007AFF</color> <!-- texto interactivo como "Ver más" -->
+
+    <color name="colorFondoInterfaz">#FFFFFF</color>
+    <color name="colorTitulo">#1F41BB</color>
+    <color name="colorSubtitulo">#000000</color>
+    <color name="colorBordeActivo">#1F41BB</color> <!-- morado por ejemplo -->
+    <color name="colorFondoInput">#F1F4FF</color>   <!-- fondo gris claro -->
+    <color name="colorEnlace">#1F41BB</color>
+    <color name="colorBoton">#1F41BB</color>
+
+</resources>

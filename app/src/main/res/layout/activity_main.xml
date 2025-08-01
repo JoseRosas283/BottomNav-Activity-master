@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="MainActivity">
+
+    <TextView
+        android:id="@+id/tvEncabezado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="75dp"
+        android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:text="Ventas mensuales"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:textColor="#999999"
+        android:fontFamily="sans-serif-condensed"
+        android:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/tvResultado"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="$8,545.00"
+        android:textSize="19sp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:layout_marginStart="140dp"
+        android:layout_marginTop="125dp"/>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/chartCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_above="@id/bottomNavigation"
+        android:layout_marginBottom="280dp"
+        app:cardCornerRadius="1dp"
+        app:cardElevation="7dp">
+
+    <!-- Gráfica de líneas -->
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChart"
+        android:layout_width="418dp"
+        android:layout_height="320dp" />
+
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Texto centrado-->
+    <TextView
+        android:id="@+id/tvStockTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bajo stock"
+        android:textStyle="bold"
+        android:textSize="19sp"
+        android:layout_marginTop="500dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="#000000" />
+
+    <TableLayout
+        android:id="@+id/tablaStock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="505dp">
+
+        <!-- Encabezado -->
+        <TableRow>
+            <TextView
+
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:textColor="#333333" />
+
+            <TextView
+
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:padding="8dp"
+                android:textColor="#333333" />
+        </TableRow>
+
+        <!-- Filas de ejemplo -->
+        <TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Coca-cola"
+                android:textSize="18sp"
+                android:layout_marginBottom="30dp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-condensed"
+                />
+
+            <TextView
+                android:text="2 unidades"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-condensed"
+                />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Pepsi"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="30dp"
+                android:fontFamily="sans-serif-condensed"
+                 />
+
+
+            <TextView
+                android:text="5 unidades"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Boing"
+                android:layout_marginBottom="30dp"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                 />
+
+
+            <TextView
+                android:text="3 unidades"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="18sp" />
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Gansito"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                />
+
+
+            <TextView
+                android:text="4 unidades"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textColor="#000000"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="18sp" />
+        </TableRow>
+
+
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/tvVerMas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver más"
+        android:textColor="#007AFF"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="506dp"
+        android:minHeight="48dp"
+        android:minWidth="88dp"
+        android:layout_marginStart="300dp"
+        android:paddingHorizontal="12dp"
+        android:fontFamily="sans-serif-condensed"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Barra navegacional-->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="1dp"
+        android:background="@drawable/bottom_background"
+        android:elevation="2dp"
+        app:itemBackground="@drawable/rounded_selector"
+        app:itemIconSize="23dp"
+        app:itemIconTint="@drawable/item_selector"
+        app:itemRippleColor="@android:color/transparent"
+        app:labelVisibilityMode="unlabeled"
+        app:menu="@menu/bottom_menu" />
+
+</RelativeLayout>
