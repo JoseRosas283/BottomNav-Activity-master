@@ -9,6 +9,17 @@ public class UsuarioLoginDTO {
 
     private String clave;
 
+    public UsuarioLoginDTO() {
+        // necesario para Retrofit o librerías de deserialización
+    }
+
+    public UsuarioLoginDTO(String usuarioId, String usuario, String correo, String clave) {
+        this.usuarioId = usuarioId;
+        this.usuario = usuario;
+        this.correo = correo;
+        this.clave = clave;
+    }
+
     public String getUsuarioId() {
         return usuarioId;
     }
