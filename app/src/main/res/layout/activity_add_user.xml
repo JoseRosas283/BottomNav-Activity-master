@@ -99,6 +99,7 @@
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etNombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nombre completo"
@@ -128,6 +129,7 @@
                     app:hintEnabled="false">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCorreo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Correo electrónico"
@@ -171,6 +173,7 @@
                             app:hintEnabled="false">
 
                             <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etClave"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Contraseña"
@@ -269,7 +272,7 @@
                 <!--  boton guardar   -->
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRestablecerContrasena"
+                    android:id="@+id/btnGuardar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="#1F41BB"

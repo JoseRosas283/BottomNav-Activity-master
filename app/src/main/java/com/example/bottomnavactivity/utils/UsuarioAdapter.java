@@ -1,6 +1,8 @@
 package com.example.bottomnavactivity.utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bottomnavactivity.DTO.UsuarioLoginDTO;
+import com.example.bottomnavactivity.EditUserActivity;
 import com.example.bottomnavactivity.R;
 
 import java.util.ArrayList;
@@ -41,6 +44,26 @@ public class UsuarioAdapter extends RecyclerView.Adapter<UsuarioAdapter.UsuarioV
 
         holder.tvNombre.setText(usuario.getUsuario());
         holder.tvCorreo.setText(usuario.getCorreo());
+
+        holder.btnEditar.setOnClickListener(v -> {
+            // Lanzamos EditUserActivity con el ID del usuario
+            Intent intent = new Intent(context, EditUserActivity.class);
+            intent.putExtra("usuarioId", usuario.getUsuarioId());
+
+            // usar startActivityForResult para refrescar la lista al volver
+            if (context instanceof Activity) {
+                ((Activity) context).startActivityForResult(intent, 1001); // código de request
+            } else {
+                context.startActivity(intent);
+            }
+        });
+
+        //  Aquí enlazamos el botón eliminar
+        holder.btnEliminar.setOnClickListener(v -> {
+            if (onClick != null) {
+                onClick.eliminarUsuario(usuario.getUsuarioId());
+            }
+        });
     }
 
     @Override

@@ -8,7 +8,7 @@ public class ServiceClient {
     public Retrofit BuildRetrofitClient() {
         Retrofit retrofit = new Retrofit.Builder()
 //                .baseUrl("https://70beae306da5.ngrok-free.app/api/")
-                .baseUrl("https://7cced09ff876.ngrok-free.app/api/")
+                .baseUrl("https://60ce02a89225.ngrok-free.app/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         return retrofit;

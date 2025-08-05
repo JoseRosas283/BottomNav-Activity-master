@@ -1,10 +1,12 @@
 package com.example.bottomnavactivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.bottomnavactivity.DTO.DeleteResponse;
 import com.example.bottomnavactivity.DTO.UsuarioLoginDTO;
 import com.example.bottomnavactivity.DTO.UsuarioResponse;
 import com.example.bottomnavactivity.Services.ServiceClient;
@@ -268,18 +271,65 @@ public class UsersActivity extends AppCompatActivity implements UsuarioAdapter.O
 
     @Override
     public void eliminarUsuario(String usuarioId) {
-//        Call<String> call = service.borrarUsuario(usuarioId);
-//        call.enqueue(new Callback<String>() {
-//            @Override
-//            public void onResponse(Call<String> call, Response<String> response) {
-//                Toast.makeText(getApplicationContext(), response.body().toString(), Toast.LENGTH_SHORT).show();
-//                obtenerUsuarios();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<String> call, Throwable t) {
-//                Toast.makeText(getApplicationContext(), "Error al eliminar el usuario", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        // Mostrar diálogo de confirmación
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar eliminación")
+                .setMessage("¿Estás seguro de que quieres eliminar este usuario?")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    // Proceder con la eliminación
+                    ejecutarEliminacion(usuarioId);
+                })
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
     }
+
+    private void ejecutarEliminacion(String usuarioId) {
+        // CAMBIO: Usar DeleteResponse en lugar de String
+        Call<DeleteResponse> call = service.borrarUsuario(usuarioId);
+        call.enqueue(new Callback<DeleteResponse>() {
+            @Override
+            public void onResponse(Call<DeleteResponse> call, Response<DeleteResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Mostrar el mensaje de la API
+                    DeleteResponse respuesta = response.body();
+                    Toast.makeText(getApplicationContext(), respuesta.getMensaje(), Toast.LENGTH_SHORT).show();
+
+                    // Refrescar la lista
+                    obtenerUsuarios();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al eliminar usuario", Toast.LENGTH_SHORT).show();
+                    Log.e("UsersActivity", "Error eliminando: " + response.code() + " - " + response.message());
+
+                    // Debug del error
+                    try {
+                        if (response.errorBody() != null) {
+                            Log.e("UsersActivity", "Error body: " + response.errorBody().string());
+                        }
+                    } catch (Exception e) {
+                        Log.e("UsersActivity", "Error leyendo error body: " + e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DeleteResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Error de conexión al eliminar", Toast.LENGTH_SHORT).show();
+                Log.e("UsersActivity", "Fallo eliminando: " + t.getMessage());
+                t.printStackTrace();
+            }
+        });
+    }
+
+    // Agregar este método en UsersActivity para el refresh automático
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001) { // código que usaste en el adapter
+            // El usuario regresó de editar, refrescar la lista
+            obtenerUsuarios();
+        }
+    }
+
 }

@@ -1,8 +1,14 @@
 package com.example.bottomnavactivity.Services;
 
+import com.example.bottomnavactivity.DTO.DeleteResponse;
 import com.example.bottomnavactivity.DTO.LoginDTO;
+import com.example.bottomnavactivity.DTO.UsuarioDTO;
+import com.example.bottomnavactivity.DTO.UsuarioGetResponse;
 import com.example.bottomnavactivity.DTO.UsuarioLoginDTO;
+import com.example.bottomnavactivity.DTO.UsuarioRegisterResponse;
 import com.example.bottomnavactivity.DTO.UsuarioResponse;
+import com.example.bottomnavactivity.DTO.UsuarioUpdateDTO;
+import com.example.bottomnavactivity.DTO.UsuarioUpdateResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -23,26 +29,26 @@ public interface UsuarioService {
 
     // Obtener usuario especifico por ID
     @GET("Usuario/getUsuario/{usuarioId}")
-    Call<UsuarioLoginDTO> obtenerUsuario(
+    Call<UsuarioGetResponse> obtenerUsuario(
             @Path("usuarioId") String usuarioId
     );
 
     // Crear nuevo usuario
     @POST("Usuario")
-    Call<String> agregarUsuario(
-            @Body UsuarioLoginDTO usuario
+    Call<UsuarioRegisterResponse> agregarUsuario(
+            @Body UsuarioDTO usuario
     );
 
     // Actualizar usuario
     @PUT("Usuario/putUsuarios/{usuarioId}")
-    Call<String> actualizarUsuario(
+    Call<UsuarioUpdateResponse> actualizarUsuario(
             @Path("usuarioId") String usuarioId,
-            @Body UsuarioLoginDTO usuario
+            @Body UsuarioUpdateDTO usuario
     );
 
     // Eliminar usuario
     @DELETE("Usuario/deleteUsuarios/{usuarioId}")
-    Call<String> borrarUsuario(
+    Call<DeleteResponse> borrarUsuario(
             @Path("usuarioId") String usuarioId
     );
 }
