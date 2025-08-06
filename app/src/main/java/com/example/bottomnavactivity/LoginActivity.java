@@ -1,6 +1,7 @@
 package com.example.bottomnavactivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -86,8 +87,20 @@ public class LoginActivity extends AppCompatActivity {
                             if(responseBody.getUsuario() != null) {
                                 Toast.makeText(LoginActivity.this, "Bienvenido " + responseBody.getUsuario(), Toast.LENGTH_SHORT).show();
 
+
+                                // GUARDAR EL USUARIO ID EN SHARED PREFERENCES
+                                SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("usuarioId", responseBody.getUsuarioId());
+                                editor.putString("usuario", responseBody.getUsuario());
+                                editor.putString("correo", responseBody.getCorreo());
+                                editor.putString("clave", responseBody.getClave());
+                                editor.apply();
+
+                                // Redirigir al MainActivity
                                 Intent inicio = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(inicio);
+                                finish();
                             }
                         }
                     }

@@ -1,8 +1,12 @@
 package com.example.bottomnavactivity.DTO;
 
+import com.google.gson.annotations.SerializedName;
+
 public class LoginDTO {
+    @SerializedName("usuario")
     private String usuario;
 
+    @SerializedName("clave")
     private String clave;
 
     public String getUsuario() {

@@ -1,15 +1,35 @@
 package com.example.bottomnavactivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.bottomnavactivity.DTO.UsuarioGetResponse;
+import com.example.bottomnavactivity.DTO.UsuarioLoginDTO;
+import com.example.bottomnavactivity.DTO.UsuarioUpdateDTO;
+import com.example.bottomnavactivity.DTO.UsuarioUpdateResponse;
+import com.example.bottomnavactivity.Services.ServiceClient;
+import com.example.bottomnavactivity.Services.UsuarioService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EditProfileActivity extends AppCompatActivity {
+
+    private TextInputEditText etNombre, etCorreo, etNuevaClave;
+    private MaterialButton btnGuardar, btnBackProfile;
+    private UsuarioService service;
+    private String usuarioId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,13 +37,29 @@ public class EditProfileActivity extends AppCompatActivity {
 //        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profile);
 
-        MaterialButton BackProfile = findViewById(R.id.btnBackProfile);
+        // Inicializar vistas
+        etNombre = findViewById(R.id.etNombre);
+        etCorreo = findViewById(R.id.etCorreo);
+        etNuevaClave = findViewById(R.id.etNuevaClave);
+        btnGuardar = findViewById(R.id.btnGuardar);
+        btnBackProfile = findViewById(R.id.btnBackProfile);
 
-        BackProfile.setOnClickListener(new View.OnClickListener() {
+        service = new ServiceClient().BuildRetrofitClient().create(UsuarioService.class);
+
+        obtenerDatosUsuarioLogueado();
+
+        btnBackProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(EditProfileActivity.this, ProfileActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actualizarUsuario();
             }
         });
 
@@ -59,6 +95,138 @@ public class EditProfileActivity extends AppCompatActivity {
             }
 
             return false;
+        });
+    }
+
+    private void obtenerDatosUsuarioLogueado() {
+        // Obtener datos desde SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+        usuarioId = prefs.getString("usuarioId", null);
+        String usuario = prefs.getString("usuario", "");
+        String correo = prefs.getString("correo", "");
+
+        Log.d("EditProfile", "usuarioId: " + usuarioId + ", usuario: " + usuario + ", correo: " + correo);
+
+        if (usuarioId != null) {
+            // Llenar los campos con los datos guardados
+            etNombre.setText(usuario);
+            etCorreo.setText(correo);
+
+            // Obtener datos actualizados del servidor
+            obtenerUsuarioActualizadoDelServidor(usuarioId);
+        } else {
+            Toast.makeText(this, "No hay usuario logueado", Toast.LENGTH_SHORT).show();
+            // Redirigir al login si no hay usuario logueado
+            Intent intent = new Intent(EditProfileActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void obtenerUsuarioActualizadoDelServidor(String usuarioId) {
+        Call<UsuarioGetResponse> call = service.obtenerUsuario(usuarioId);
+        call.enqueue(new Callback<UsuarioGetResponse>() {
+            @Override
+            public void onResponse(Call<UsuarioGetResponse> call, Response<UsuarioGetResponse> response) {
+                Log.d("EditProfile", "Response code: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    UsuarioGetResponse respuesta = response.body();
+                    UsuarioLoginDTO usuario = respuesta.getUsuario();
+
+                    if (usuario != null) {
+                        Log.d("EditProfile", "Usuario obtenido del servidor: " + usuario.getUsuario() + ", " + usuario.getCorreo());
+                        // Actualizar los campos con los datos más recientes del servidor
+                        etNombre.setText(usuario.getUsuario());
+                        etCorreo.setText(usuario.getCorreo());
+
+                        // Actualizar SharedPreferences con los datos más recientes
+                        actualizarSharedPreferences(usuario);
+                    }
+                } else {
+                    Log.e("EditProfile", "Response no exitosa: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UsuarioGetResponse> call, Throwable t) {
+                Log.e("EditProfile", "Fallo al obtener datos del servidor: " + t.getMessage());
+            }
+        });
+    }
+
+    private void actualizarSharedPreferences(UsuarioLoginDTO usuario) {
+        SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("usuario", usuario.getUsuario());
+        editor.putString("correo", usuario.getCorreo());
+        editor.apply();
+    }
+
+    private void actualizarUsuario() {
+        String nombre = etNombre.getText().toString().trim();
+        String correo = etCorreo.getText().toString().trim();
+        String nuevaClave = etNuevaClave.getText().toString().trim();
+
+        if (nombre.isEmpty() || correo.isEmpty()) {
+            Toast.makeText(this, "El nombre y correo son obligatorios", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (usuarioId == null) {
+            Toast.makeText(this, "Error: usuario no identificado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Crear objeto para actualizar con clave opcional
+        UsuarioUpdateDTO usuarioActualizado;
+        if (!nuevaClave.isEmpty()) {
+            usuarioActualizado = new UsuarioUpdateDTO(nombre, correo, nuevaClave);
+        } else {
+            usuarioActualizado = new UsuarioUpdateDTO(nombre, correo);
+        }
+
+        Call<UsuarioUpdateResponse> call = service.actualizarUsuario(usuarioId, usuarioActualizado);
+        call.enqueue(new Callback<UsuarioUpdateResponse>() {
+            @Override
+            public void onResponse(Call<UsuarioUpdateResponse> call, Response<UsuarioUpdateResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    UsuarioUpdateResponse respuesta = response.body();
+                    Toast.makeText(EditProfileActivity.this, "Perfil actualizado correctamente", Toast.LENGTH_SHORT).show();
+
+                    // Actualizar SharedPreferences con los nuevos datos
+                    SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("usuario", nombre);
+                    editor.putString("correo", correo);
+                    if (!nuevaClave.isEmpty()) {
+                        editor.putString("clave", nuevaClave);
+                    }
+                    editor.apply();
+
+                    // NOTA: NO redirige automáticamente, el usuario debe usar el botón Back
+                    // El botón btnBackProfile ya tiene su funcionalidad para regresar a ProfileActivity
+                } else {
+                    Toast.makeText(EditProfileActivity.this, "Error al actualizar perfil", Toast.LENGTH_SHORT).show();
+                    Log.e("EditProfile", "Error: " + response.code() + " - " + response.message());
+
+                    try {
+                        if (response.errorBody() != null) {
+                            Log.e("EditProfile", "Error body: " + response.errorBody().string());
+                        }
+                    } catch (Exception e) {
+                        Log.e("EditProfile", "Error leyendo error body: " + e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UsuarioUpdateResponse> call, Throwable t) {
+                Toast.makeText(EditProfileActivity.this, "Error de conexión", Toast.LENGTH_SHORT).show();
+                Log.e("EditProfile", "Fallo: " + t.getMessage());
+                t.printStackTrace();
+            }
         });
     }
 }
