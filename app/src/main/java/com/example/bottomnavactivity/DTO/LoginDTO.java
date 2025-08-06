@@ -3,18 +3,18 @@ package com.example.bottomnavactivity.DTO;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginDTO {
-    @SerializedName("usuario")
-    private String usuario;
+    @SerializedName("correo")
+    private String correo;
 
     @SerializedName("clave")
     private String clave;
 
-    public String getUsuario() {
-        return usuario;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getClave() {

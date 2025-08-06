@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (txtUsuario.getEditText().getText().toString().isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Debe ingresar un usuario", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Debe ingresar un correo electrónico", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -63,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                 UsuarioService service = retrofit.create(UsuarioService.class);
 
                 LoginDTO loginDTO = new LoginDTO();
-                loginDTO.setUsuario(txtUsuario.getEditText().getText().toString());
+                loginDTO.setCorreo(txtUsuario.getEditText().getText().toString());
                 loginDTO.setClave(txtPassword.getEditText().getText().toString());
 
                 Call<UsuarioLoginDTO> usuarioCall = service.Login(loginDTO);
@@ -74,17 +74,17 @@ public class LoginActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             UsuarioLoginDTO responseBody = response.body();
 
-                            if(responseBody == null) {
+                            if (responseBody == null) {
                                 Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
-                            if(responseBody.getUsuario() == null) {
+                            if (responseBody.getUsuario() == null) {
                                 Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
-                            if(responseBody.getUsuario() != null) {
+                            if (responseBody.getUsuario() != null) {
                                 Toast.makeText(LoginActivity.this, "Bienvenido " + responseBody.getUsuario(), Toast.LENGTH_SHORT).show();
 
 
