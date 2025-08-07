@@ -22,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -102,8 +103,14 @@ public class AddUserActivity extends AppCompatActivity {
         String correo = binding.etCorreo.getText().toString().trim();
         String clave = binding.etClave.getText().toString().trim();
 
-        if(usuario.isEmpty() || correo.isEmpty() || clave.isEmpty()) {
-            Toast.makeText(this, "Completa los campos", Toast.LENGTH_SHORT).show();
+        // Llamar a las funciones de validación
+        boolean nombreValido = validarNombre();
+        boolean correoValido = validarCorreo();
+        boolean claveValida = validarClave();
+        boolean confirmarClaveValida = validarConfirmarClave();
+
+        if (!nombreValido || !correoValido || !claveValida || !confirmarClaveValida) {
+            Toast.makeText(this, "Corrige los errores antes de continuar", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -141,5 +148,94 @@ public class AddUserActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean validarNombre() {
+        String usuario = binding.etNombre.getText().toString().trim();
+
+        if (usuario.isEmpty()) {
+            binding.etNombre.setError("El nombre completo es obligatorio");
+            return false;
+        } else if (usuario.length() < 3) {
+            binding.etNombre.setError("Mínimo 3 caracteres");
+            return false;
+        } else if (usuario.length() > 100) {
+            binding.etNombre.setError("Máximo 100 caracteres");
+            return false;
+        } else if (!Pattern.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", usuario)) {
+            binding.etNombre.setError("Solo se permiten letras y espacios");
+            return false;
+        } else if (usuario.trim().split("\\s+").length < 2) {
+            binding.etNombre.setError("Ingresa nombre y apellido");
+            return false;
+        } else {
+            binding.etNombre.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarCorreo() {
+        String correo = binding.etCorreo.getText().toString().trim();
+
+        if (correo.isEmpty()) {
+            binding.etCorreo.setError("El correo electrónico es obligatorio");
+            return false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            binding.etCorreo.setError("Formato de correo inválido");
+            return false;
+        } else if (!correo.toLowerCase().contains("@gmail.com") && !correo.toLowerCase().contains("@hotmail.com") &&
+                !correo.toLowerCase().contains("@yahoo.com") && !correo.toLowerCase().contains("@outlook.com")) {
+            binding.etCorreo.setError("Usa un proveedor válido (@gmail.com, @hotmail.com, etc.)");
+            return false;
+        } else if (correo.length() > 100) {
+            binding.etCorreo.setError("Máximo 100 caracteres");
+            return false;
+        } else {
+            binding.etCorreo.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarClave() {
+        String clave = binding.etClave.getText().toString().trim();
+
+        if (clave.isEmpty()) {
+            binding.etClave.setError("La contraseña es obligatoria");
+            return false;
+        } else if (clave.length() < 6) {
+            binding.etClave.setError("Mínimo 6 caracteres");
+            return false;
+        } else if (clave.length() > 50) {
+            binding.etClave.setError("Máximo 50 caracteres");
+            return false;
+        } else if (clave.contains(" ")) {
+            binding.etClave.setError("No se permiten espacios");
+            return false;
+        } else if (!Pattern.matches(".*[a-zA-Z].*", clave)) {
+            binding.etClave.setError("Debe contener al menos una letra");
+            return false;
+        } else if (!Pattern.matches(".*[0-9].*", clave)) {
+            binding.etClave.setError("Debe contener al menos un número");
+            return false;
+        } else {
+            binding.etClave.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarConfirmarClave() {
+        String clave = binding.etClave.getText().toString().trim();
+        String confirmarClave = binding.etConfirmarClave.getText().toString().trim();
+
+        if (confirmarClave.isEmpty()) {
+            binding.etConfirmarClave.setError("Debes confirmar la contraseña");
+            return false;
+        } else if (!clave.equals(confirmarClave)) {
+            binding.etConfirmarClave.setError("Las contraseñas no coinciden");
+            return false;
+        } else {
+            binding.etConfirmarClave.setError(null);
+            return true;
+        }
     }
 }

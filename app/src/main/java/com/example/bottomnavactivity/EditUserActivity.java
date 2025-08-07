@@ -3,6 +3,7 @@ package com.example.bottomnavactivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,6 +22,8 @@ import com.example.bottomnavactivity.Services.UsuarioService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,6 +60,16 @@ public class EditUserActivity extends AppCompatActivity {
         }
 
         btnGuardar.setOnClickListener(view -> actualizarUsuario());
+
+        MaterialButton BackUsers = findViewById(R.id.btnBackUsers);
+
+        BackUsers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EditUserActivity.this, UsersActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
@@ -131,8 +144,12 @@ public class EditUserActivity extends AppCompatActivity {
         String nombre = etNombre.getText().toString().trim();
         String correo = etCorreo.getText().toString().trim();
 
-        if (nombre.isEmpty() || correo.isEmpty()) {
-            Toast.makeText(this, "Completa todos los campos", Toast.LENGTH_SHORT).show();
+        // Llamar a las funciones de validación
+        boolean nombreValido = validarNombre();
+        boolean correoValido = validarCorreo();
+
+        if (!nombreValido || !correoValido) {
+            Toast.makeText(this, "Corrige los errores antes de continuar", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -181,6 +198,52 @@ public class EditUserActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+    private boolean validarNombre() {
+        String usuario = etNombre.getText().toString().trim();
+
+        if (usuario.isEmpty()) {
+            etNombre.setError("El nombre completo es obligatorio");
+            return false;
+        } else if (usuario.length() < 3) {
+            etNombre.setError("Mínimo 3 caracteres");
+            return false;
+        } else if (usuario.length() > 100) {
+            etNombre.setError("Máximo 100 caracteres");
+            return false;
+        } else if (!Pattern.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", usuario)) {
+            etNombre.setError("Solo se permiten letras y espacios");
+            return false;
+        } else if (usuario.trim().split("\\s+").length < 2) {
+            etNombre.setError("Ingresa nombre y apellido");
+            return false;
+        } else {
+            etNombre.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarCorreo() {
+        String correo = etCorreo.getText().toString().trim();
+
+        if (correo.isEmpty()) {
+            etCorreo.setError("El correo electrónico es obligatorio");
+            return false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            etCorreo.setError("Formato de correo inválido");
+            return false;
+        } else if (!correo.toLowerCase().contains("@gmail.com") && !correo.toLowerCase().contains("@hotmail.com") &&
+                !correo.toLowerCase().contains("@yahoo.com") && !correo.toLowerCase().contains("@outlook.com")) {
+            etCorreo.setError("Usa un proveedor válido (@gmail.com, @hotmail.com, etc.)");
+            return false;
+        } else if (correo.length() > 100) {
+            etCorreo.setError("Máximo 100 caracteres");
+            return false;
+        } else {
+            etCorreo.setError(null);
+            return true;
+        }
     }
 
 }

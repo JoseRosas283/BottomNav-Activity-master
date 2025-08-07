@@ -19,13 +19,15 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.regex.Pattern;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    private TextInputEditText etNombre, etCorreo, etNuevaClave;
+    private TextInputEditText etNombre, etCorreo, etNuevaClave, etConfNuevaClave;
     private MaterialButton btnGuardar, btnBackProfile;
     private UsuarioService service;
     private String usuarioId;
@@ -41,6 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
         etNombre = findViewById(R.id.etNombre);
         etCorreo = findViewById(R.id.etCorreo);
         etNuevaClave = findViewById(R.id.etNuevaClave);
+        etConfNuevaClave = findViewById(R.id.etConfNuevaClave);
         btnGuardar = findViewById(R.id.btnGuardar);
         btnBackProfile = findViewById(R.id.btnBackProfile);
 
@@ -168,9 +171,41 @@ public class EditProfileActivity extends AppCompatActivity {
         String nombre = etNombre.getText().toString().trim();
         String correo = etCorreo.getText().toString().trim();
         String nuevaClave = etNuevaClave.getText().toString().trim();
+        String confirmarClave = etConfNuevaClave.getText().toString().trim();
 
-        if (nombre.isEmpty() || correo.isEmpty()) {
-            Toast.makeText(this, "El nombre y correo son obligatorios", Toast.LENGTH_SHORT).show();
+        // Validar solo si hay cambios en los campos
+        boolean nombreValido = true;
+        boolean correoValido = true;
+        boolean claveValida = true;
+        boolean confirmarClaveValida = true;
+
+        // Solo validar nombre si no está vacío (si el usuario quiere cambiarlo)
+        if (!nombre.isEmpty()) {
+            nombreValido = validarNombre();
+        }
+
+        // Solo validar correo si no está vacío (si el usuario quiere cambiarlo)
+        if (!correo.isEmpty()) {
+            correoValido = validarCorreo();
+        }
+
+        // Solo validar clave si no está vacía (si el usuario quiere cambiarla)
+        if (!nuevaClave.isEmpty()) {
+            claveValida = validarClave();
+        }
+
+        if (!nuevaClave.isEmpty() || !confirmarClave.isEmpty()) {
+            confirmarClaveValida = validarConfirmarClave();
+        }
+
+        if (!nombreValido || !correoValido || !claveValida || !confirmarClaveValida) {
+            Toast.makeText(this, "Corrige los errores antes de continuar", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Verificar que al menos un campo tenga datos para actualizar
+        if (nombre.isEmpty() && correo.isEmpty() && nuevaClave.isEmpty()) {
+            Toast.makeText(this, "Debe modificar al menos un campo", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -200,6 +235,12 @@ public class EditProfileActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("usuario", nombre);
                     editor.putString("correo", correo);
+                    if (!nombre.isEmpty()) {
+                        editor.putString("usuario", nombre);
+                    }
+                    if (!correo.isEmpty()) {
+                        editor.putString("correo", correo);
+                    }
                     if (!nuevaClave.isEmpty()) {
                         editor.putString("clave", nuevaClave);
                     }
@@ -228,5 +269,101 @@ public class EditProfileActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+    private boolean validarNombre() {
+        String usuario = etNombre.getText().toString().trim();
+
+        if (usuario.length() < 3) {
+            etNombre.setError("Mínimo 3 caracteres");
+            return false;
+        } else if (usuario.length() > 100) {
+            etNombre.setError("Máximo 100 caracteres");
+            return false;
+        } else if (!Pattern.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", usuario)) {
+            etNombre.setError("Solo se permiten letras y espacios");
+            return false;
+        } else if (usuario.trim().split("\\s+").length < 2) {
+            etNombre.setError("Ingresa nombre y apellido");
+            return false;
+        } else {
+            etNombre.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarCorreo() {
+        String correo = etCorreo.getText().toString().trim();
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            etCorreo.setError("Formato de correo inválido");
+            return false;
+        } else if (!correo.toLowerCase().contains("@gmail.com") && !correo.toLowerCase().contains("@hotmail.com") &&
+                !correo.toLowerCase().contains("@yahoo.com") && !correo.toLowerCase().contains("@outlook.com")) {
+            etCorreo.setError("Usa un proveedor válido (@gmail.com, @hotmail.com, etc.)");
+            return false;
+        } else if (correo.length() > 100) {
+            etCorreo.setError("Máximo 100 caracteres");
+            return false;
+        } else {
+            etCorreo.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarClave() {
+        String clave = etNuevaClave.getText().toString().trim();
+
+        if (clave.length() < 6) {
+            etNuevaClave.setError("Mínimo 6 caracteres");
+            return false;
+        } else if (clave.length() > 50) {
+            etNuevaClave.setError("Máximo 50 caracteres");
+            return false;
+        } else if (clave.contains(" ")) {
+            etNuevaClave.setError("No se permiten espacios");
+            return false;
+        } else if (!Pattern.matches(".*[a-zA-Z].*", clave)) {
+            etNuevaClave.setError("Debe contener al menos una letra");
+            return false;
+        } else if (!Pattern.matches(".*[0-9].*", clave)) {
+            etNuevaClave.setError("Debe contener al menos un número");
+            return false;
+        } else {
+            etNuevaClave.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarConfirmarClave() {
+        String nuevaClave = etNuevaClave.getText().toString().trim();
+        String confirmarClave = etConfNuevaClave.getText().toString().trim();
+
+        // Si no hay contraseña nueva, no es necesario confirmar
+        if (nuevaClave.isEmpty() && confirmarClave.isEmpty()) {
+            etConfNuevaClave.setError(null);
+            return true;
+        }
+
+        // Si hay contraseña nueva pero no confirmación
+        if (!nuevaClave.isEmpty() && confirmarClave.isEmpty()) {
+            etConfNuevaClave.setError("Debes confirmar la nueva contraseña");
+            return false;
+        }
+
+        // Si hay confirmación pero no contraseña nueva
+        if (nuevaClave.isEmpty() && !confirmarClave.isEmpty()) {
+            etConfNuevaClave.setError("Primero ingresa la nueva contraseña");
+            return false;
+        }
+
+        // Si ambas tienen contenido, verificar que coincidan
+        if (!nuevaClave.equals(confirmarClave)) {
+            etConfNuevaClave.setError("Las contraseñas no coinciden");
+            return false;
+        }
+
+        etConfNuevaClave.setError(null);
+        return true;
     }
 }

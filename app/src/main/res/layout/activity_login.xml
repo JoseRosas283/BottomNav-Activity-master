@@ -67,7 +67,8 @@
             app:boxBackgroundColor="@color/colorFondoInput"
             app:boxStrokeColor="@color/colorBordeActivo"
             app:boxStrokeWidth="0dp"
-            app:hintTextColor="@color/colorBordeActivo">
+            app:hintTextColor="@color/colorBordeActivo"
+            app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"

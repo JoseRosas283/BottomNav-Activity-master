@@ -20,6 +20,8 @@ import com.example.bottomnavactivity.Services.ServiceClient;
 import com.example.bottomnavactivity.Services.UsuarioService;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.regex.Pattern;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -48,13 +50,12 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtUsuario.getEditText().getText().toString().isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Debe ingresar un correo electrónico", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                // Validar campos antes de hacer la petición
+                boolean correoValido = validarCorreo();
+                boolean claveValida = validarClave();
 
-                if (txtPassword.getEditText().getText().toString().isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Debe tener una contraseña", Toast.LENGTH_SHORT).show();
+                if (!correoValido || !claveValida) {
+                    Toast.makeText(LoginActivity.this, "Corrige los errores antes de continuar", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -102,6 +103,18 @@ public class LoginActivity extends AppCompatActivity {
                                 startActivity(inicio);
                                 finish();
                             }
+                        } else {
+                            String errorMessage = "Error del servidor";
+
+                            if (response.code() == 404) {
+                                errorMessage = "Correo o contraseña incorrectos";
+                            } else if (response.code() == 500) {
+                                errorMessage = "Error en el servidor, intenta más tarde";
+                            } else if (response.code() == 502) {
+                                errorMessage = "Servidor no disponible, intenta en unos minutos";
+                            }
+
+                            Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -129,5 +142,54 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private boolean validarCorreo() {
+        String correo = txtUsuario.getEditText().getText().toString().trim();
+
+        if (correo.isEmpty()) {
+            txtUsuario.setError("El correo electrónico es obligatorio");
+            return false;
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            txtUsuario.setError("Formato de correo inválido");
+            return false;
+        } else if (!correo.toLowerCase().contains("@gmail.com") && !correo.toLowerCase().contains("@hotmail.com") &&
+                !correo.toLowerCase().contains("@yahoo.com") && !correo.toLowerCase().contains("@outlook.com")) {
+            txtUsuario.setError("Usa un proveedor válido (@gmail.com, @hotmail.com, etc.)");
+            return false;
+        } else if (correo.length() > 100) {
+            txtUsuario.setError("Máximo 100 caracteres");
+            return false;
+        } else {
+            txtUsuario.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validarClave() {
+        String clave = txtPassword.getEditText().getText().toString().trim();
+
+        if (clave.isEmpty()) {
+            txtPassword.setError("La contraseña es obligatoria");
+            return false;
+        } else if (clave.length() < 6) {
+            txtPassword.setError("Mínimo 6 caracteres");
+            return false;
+        } else if (clave.length() > 50) {
+            txtPassword.setError("Máximo 50 caracteres");
+            return false;
+        } else if (clave.contains(" ")) {
+            txtPassword.setError("No se permiten espacios");
+            return false;
+        } else if (!Pattern.matches(".*[a-zA-Z].*", clave)) {
+            txtPassword.setError("Debe contener al menos una letra");
+            return false;
+        } else if (!Pattern.matches(".*[0-9].*", clave)) {
+            txtPassword.setError("Debe contener al menos un número");
+            return false;
+        } else {
+            txtPassword.setError(null);
+            return true;
+        }
     }
 }

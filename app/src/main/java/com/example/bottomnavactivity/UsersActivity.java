@@ -40,6 +40,7 @@ public class UsersActivity extends AppCompatActivity implements UsuarioAdapter.O
     UsuarioAdapter adaptador;
 
     ArrayList<UsuarioLoginDTO> listaUsuarios = new ArrayList<>();
+    ArrayList<UsuarioLoginDTO> listaFiltrada = new ArrayList<>();
 
     UsuarioLoginDTO usuario = new UsuarioLoginDTO("-1", "", "", "");
 
@@ -104,6 +105,8 @@ public class UsersActivity extends AppCompatActivity implements UsuarioAdapter.O
                     // Quitar la X
                     searchInput.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 }
+                // Realizar búsqueda en tiempo real
+                filtrarUsuarios(s.toString());
             }
 
             @Override
@@ -161,6 +164,34 @@ public class UsersActivity extends AppCompatActivity implements UsuarioAdapter.O
 
             return false;
         });
+    }
+
+    // Método para filtrar usuarios
+    private void filtrarUsuarios(String texto) {
+        listaFiltrada.clear();
+
+        if (texto.isEmpty()) {
+            // Si no hay texto, mostrar todos los usuarios
+            listaFiltrada.addAll(listaUsuarios);
+        } else {
+            // Filtrar por nombre de usuario o correo
+            for (UsuarioLoginDTO usuario : listaUsuarios) {
+                if (usuario.getUsuario().toLowerCase().contains(texto.toLowerCase()) ||
+                        usuario.getCorreo().toLowerCase().contains(texto.toLowerCase())) {
+                    listaFiltrada.add(usuario);
+                }
+            }
+        }
+
+        // Mostrar/ocultar mensaje de "no encontrado"
+        if (listaFiltrada.isEmpty() && !texto.isEmpty()) {
+            binding.tvNoResultados.setVisibility(View.VISIBLE);
+        } else {
+            binding.tvNoResultados.setVisibility(View.GONE);
+        }
+
+        // Notificar al adaptador que los datos han cambiado
+        adaptador.notifyDataSetChanged();
     }
 
 //    binding.btnAddUpdate.setOnClickListener(view -> {
@@ -245,6 +276,11 @@ public class UsersActivity extends AppCompatActivity implements UsuarioAdapter.O
             public void onResponse(Call<UsuarioResponse> call, Response<UsuarioResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     listaUsuarios = response.body().getListaUsuarios();
+
+                    // SOLUCIÓN: Inicializar listaFiltrada con todos los usuarios
+                    listaFiltrada.clear();
+                    listaFiltrada.addAll(listaUsuarios);
+
                     setupRecyclerView();
                 } else {
                     Toast.makeText(getApplicationContext(), "Error: respuesta vacía o no exitosa", Toast.LENGTH_SHORT).show();
@@ -259,7 +295,8 @@ public class UsersActivity extends AppCompatActivity implements UsuarioAdapter.O
     }
 
     public void setupRecyclerView() {
-        adaptador = new UsuarioAdapter(this, listaUsuarios);
+        // adaptador = new UsuarioAdapter(this, listaUsuarios);
+        adaptador = new UsuarioAdapter(this, listaFiltrada);
         adaptador.setOnClick(this);
         binding.rvUsuarios.setAdapter(adaptador);
     }
