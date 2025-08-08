@@ -182,149 +182,18 @@
         android:textSize="30dp"
         android:textStyle="bold" />
 
-    <ScrollView
-        android:id="@+id/scrollTabla"
+    <!-- CAMBIADO: RecyclerView directo como en SearchActivity -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvUsuarios"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@id/bottomNavigation"
         android:layout_below="@id/searchContainer"
-        android:layout_marginTop="86dp">
-
-        <LinearLayout
-            android:id="@+id/contenedorProductos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Fila ejemplo -->
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvUsuarios"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:listitem="@layout/item_rv_usuario"/>
-
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="8dp"-->
-<!--                android:background="@android:color/white"-->
-<!--                android:elevation="2dp"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:padding="12dp">-->
-
-<!--                <LinearLayout-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:orientation="vertical">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="Alexis Huerta Hernández"-->
-<!--                        android:textColor="#000000"-->
-<!--                        android:textSize="16sp"-->
-<!--                        android:textStyle="bold" />-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="alexishuerta@gmail.com"-->
-<!--                        android:textColor="#888888"-->
-<!--                        android:textSize="13sp" />-->
-<!--                </LinearLayout>-->
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:text="Admin"-->
-<!--                    android:textColor="#000000"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/btnEditar1"-->
-<!--                    android:layout_width="50dp"-->
-<!--                    android:layout_height="50dp"-->
-<!--                    android:background="?attr/selectableItemBackgroundBorderless"-->
-<!--                    android:contentDescription="Editar"-->
-<!--                    android:src="@drawable/ic_edit_square" />-->
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/btnEliminar1"-->
-<!--                    android:layout_width="50dp"-->
-<!--                    android:layout_height="50dp"-->
-<!--                    android:layout_marginStart="4dp"-->
-<!--                    android:background="?attr/selectableItemBackgroundBorderless"-->
-<!--                    android:contentDescription="Eliminar"-->
-<!--                    android:src="@drawable/ic_delete" />-->
-<!--            </LinearLayout>-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginBottom="8dp"-->
-<!--                android:background="@android:color/white"-->
-<!--                android:elevation="2dp"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:orientation="horizontal"-->
-<!--                android:padding="12dp">-->
-
-<!--                <LinearLayout-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:orientation="vertical">-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="David Nieves Huerta"-->
-<!--                        android:textColor="#000000"-->
-<!--                        android:textSize="16sp"-->
-<!--                        android:textStyle="bold" />-->
-
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="davidnieves@gmail.com"-->
-<!--                        android:textColor="#888888"-->
-<!--                        android:textSize="13sp" />-->
-<!--                </LinearLayout>-->
-
-<!--                <TextView-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:text="Admin"-->
-<!--                    android:textColor="#000000"-->
-<!--                    android:textSize="15sp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/btnEditar"-->
-<!--                    android:layout_width="50dp"-->
-<!--                    android:layout_height="50dp"-->
-<!--                    android:background="?attr/selectableItemBackgroundBorderless"-->
-<!--                    android:contentDescription="Editar"-->
-<!--                    android:src="@drawable/ic_edit_square" />-->
-
-<!--                <ImageButton-->
-<!--                    android:id="@+id/btnEliminar"-->
-<!--                    android:layout_width="50dp"-->
-<!--                    android:layout_height="50dp"-->
-<!--                    android:layout_marginStart="4dp"-->
-<!--                    android:background="?attr/selectableItemBackgroundBorderless"-->
-<!--                    android:contentDescription="Eliminar"-->
-<!--                    android:src="@drawable/ic_delete" />-->
-<!--            </LinearLayout>-->
-        </LinearLayout>
-    </ScrollView>
+        android:layout_above="@id/bottomNavigation"
+        android:layout_marginTop="100dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_rv_usuario" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"

@@ -352,7 +352,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void cargarFotoPerfilGuardada() {
         if (usuarioId == null) {
-            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            imagePerfil.setImageResource(R.drawable.img_profile);
             return;
         }
 
@@ -368,11 +368,11 @@ public class EditProfileActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("EditProfile", "Error al cargar imagen guardada: " + e.getMessage());
                 // Si hay error, mantener la imagen por defecto
-                imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+                imagePerfil.setImageResource(R.drawable.img_profile);
             }
         } else {
             // Si no hay imagen guardada, usar la imagen por defecto
-            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            imagePerfil.setImageResource(R.drawable.img_profile);
         }
     }
 

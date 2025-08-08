@@ -128,7 +128,7 @@
                 android:layout_height="match_parent"
                 android:contentDescription="Imagen de perfil"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_avatar_img" />
+                android:src="@drawable/img_profile" />
         </com.google.android.material.card.MaterialCardView>
 
         <!--  Primer input -->

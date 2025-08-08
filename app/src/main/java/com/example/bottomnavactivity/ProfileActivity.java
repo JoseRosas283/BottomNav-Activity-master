@@ -133,7 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
             tvNombre.setText("Usuario no logueado");
             tvCorreo.setText("No disponible");
 
-            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            imagePerfil.setImageResource(R.drawable.img_profile);
 
             Toast.makeText(this, "No hay usuario logueado", Toast.LENGTH_SHORT).show();
             redirigirAlLogin();
@@ -143,7 +143,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void cargarFotoPerfilGuardada() {
 
         if (usuarioId == null) {
-            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            imagePerfil.setImageResource(R.drawable.img_profile);
             return;
         }
 
@@ -159,11 +159,11 @@ public class ProfileActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("ProfileActivity", "Error al cargar imagen guardada: " + e.getMessage());
                 // Si hay error, mantener la imagen por defecto
-                imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+                imagePerfil.setImageResource(R.drawable.img_profile);
             }
         } else {
             // Si no hay imagen guardada para este usuario, usar la imagen por defecto
-            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            imagePerfil.setImageResource(R.drawable.img_profile);
             Log.d("ProfileActivity", "No hay foto guardada para usuario: " + usuarioId);
         }
     }
