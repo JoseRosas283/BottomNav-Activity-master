@@ -5,12 +5,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ServiceClient {
 
-    public Retrofit BuildRetrofitClient() {
-        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl("https://70beae306da5.ngrok-free.app/api/")
-                .baseUrl("https://3c60b0354a20.ngrok-free.app/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+    private static final String BASE_URL = "https://8dab3cbc40b6.ngrok-free.app/api/";
+    private static Retrofit retrofit;
+
+    public static Retrofit BuildRetrofitClient() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
         return retrofit;
     }
+
+//    public Retrofit BuildRetrofitClient() {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://3c60b0354a20.ngrok-free.app/api/")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        return retrofit;
+//    }
+
 }

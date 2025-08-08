@@ -5,10 +5,18 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.example.bottomnavactivity.DTO.ProductoDTO;
+import com.example.bottomnavactivity.DTO.ProductoResponse;
+import com.example.bottomnavactivity.Services.ProductoServices;
+import com.example.bottomnavactivity.Services.ServiceClient;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.formatter.ValueFormatter;
@@ -26,7 +34,12 @@ import androidx.core.content.ContextCompat;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -181,5 +194,80 @@ public class MainActivity extends AppCompatActivity {
                 tvResultado.setText("");
             }
         });
+
+        // 🔄 Llamada a la API para llenar la tabla
+        cargarProductosBajoStock();
+    }
+
+    private void cargarProductosBajoStock() {
+        ProductoServices service = new ServiceClient().BuildRetrofitClient().create(ProductoServices.class);
+        Call<ProductoResponse> call = service.ObtenerProductos();
+
+        call.enqueue(new Callback<ProductoResponse>() {
+            @Override
+            public void onResponse(Call<ProductoResponse> call, Response<ProductoResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ProductoDTO> productos = response.body().getListaProductos();
+                    mostrarEnTabla(productos);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductoResponse> call, Throwable t) {
+                Log.e("API", "Error al obtener productos", t);
+            }
+        });
+    }
+
+    private void mostrarEnTabla(List<ProductoDTO> productos) {
+        TableLayout tablaStock = findViewById(R.id.tablaStock);
+        tablaStock.removeAllViews();
+
+        // Encabezado
+        TableRow encabezado = new TableRow(this);
+        TextView thNombre = new TextView(this);
+        thNombre.setText("Producto");
+        thNombre.setTypeface(Typeface.DEFAULT_BOLD);
+        thNombre.setPadding(8, 8, 8, 8);
+        thNombre.setTextColor(Color.BLACK); // 🖤 Texto negro
+
+        TextView thCantidad = new TextView(this);
+        thCantidad.setText("Cantidad");
+        thCantidad.setTypeface(Typeface.DEFAULT_BOLD);
+        thCantidad.setPadding(8, 8, 8, 8);
+        thCantidad.setTextColor(Color.BLACK); // 🖤 Texto negro
+
+        encabezado.addView(thNombre);
+        encabezado.addView(thCantidad);
+        tablaStock.addView(encabezado);
+
+        // Filas de productos con cantidad <= 5
+        for (ProductoDTO p : productos) {
+            if (p.getCantidad() <= 5) {
+                TableRow fila = new TableRow(this);
+
+                TextView tvNombre = new TextView(this);
+                tvNombre.setText(p.getNombreProducto());
+                tvNombre.setPadding(8, 8, 8, 8);
+                tvNombre.setTextColor(Color.BLACK); // 🖤 Texto negro
+
+                TextView tvCantidad = new TextView(this);
+                int cantidad = p.getCantidad();
+                String textoCantidad = cantidad + (cantidad == 1 ? " pieza" : " piezas");
+                tvCantidad.setText(textoCantidad);
+                tvCantidad.setPadding(8, 8, 8, 8);
+                tvCantidad.setTextColor(Color.BLACK); // 🖤 Texto negro por defecto
+
+                // 🔴 Resaltar si es crítico
+                if (cantidad == 1) {
+                    tvCantidad.setTextColor(Color.RED);
+                    tvCantidad.setTypeface(Typeface.DEFAULT_BOLD);
+                }
+
+                fila.addView(tvNombre);
+                fila.addView(tvCantidad);
+                tablaStock.addView(fila);
+            }
+        }
     }
 }
