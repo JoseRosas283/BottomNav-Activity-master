@@ -28,7 +28,6 @@
         app:backgroundTint="#1F41BB"
         app:tint="@android:color/white" />
 
-
     <LinearLayout
         android:id="@+id/searchContainer"
         android:layout_width="350dp"
@@ -60,7 +59,21 @@
             android:padding="0dp"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/darker_gray" />
+
     </LinearLayout>
+
+    <!-- Mensaje cuando no hay resultados -->
+    <TextView
+        android:id="@+id/tvNoResultados"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchContainer"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="Producto no encontrado"
+        android:textColor="#FF0000"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
 
     <TextView
@@ -73,146 +86,18 @@
         android:textSize="30dp"
         android:textStyle="bold" />
 
+    <!-- REEMPLAZADO: RecyclerView en lugar de ScrollView -->
 
-    <ScrollView
-        android:id="@+id/scrollTabla"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProductos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@id/bottomNavigation"
         android:layout_below="@id/searchContainer"
-        android:layout_marginTop="86dp">
-
-        <LinearLayout
-            android:id="@+id/contenedorProductos"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- Fila ejemplo (puedes duplicar cuantas veces quieras visualmente) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/white"
-                android:elevation="2dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nombre producto"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cantidad: 5"
-                        android:textColor="#888888"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="$99.99"
-                    android:textColor="#000000"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <ImageButton
-                    android:id="@+id/btnEditar1"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Editar"
-                    android:src="@drawable/ic_edit_square" />
-
-                <ImageButton
-                    android:id="@+id/btnEliminar1"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Eliminar"
-                    android:src="@drawable/ic_delete" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/white"
-                android:elevation="2dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Nombre producto"
-                        android:textColor="#000000"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Cantidad: 5"
-                        android:textColor="#888888"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="$99.99"
-                    android:textColor="#000000"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <ImageButton
-                    android:id="@+id/btnEditar"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginLeft="10dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Editar"
-                    android:src="@drawable/ic_edit_square" />
-
-                <ImageButton
-                    android:id="@+id/btnEliminar"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="4dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="Eliminar"
-                    android:src="@drawable/ic_delete" />
-            </LinearLayout>
-
-
-        </LinearLayout>
-    </ScrollView>
+        android:layout_above="@id/bottomNavigation"
+        android:layout_marginTop="100dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        android:scrollbars="vertical" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"

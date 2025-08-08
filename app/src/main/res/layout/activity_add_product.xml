@@ -77,6 +77,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="40dp"
@@ -99,6 +100,7 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputCodigo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="40dp"
@@ -137,6 +139,7 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputCantidad"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="0" />
@@ -164,6 +167,7 @@
                         android:layout_height="wrap_content">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/inputPrecio"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="40dp"
@@ -212,7 +216,7 @@
 
             <!-- Botón Guardar -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRestablecerContrasena"
+                android:id="@+id/btnGuardarProducto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="70dp"

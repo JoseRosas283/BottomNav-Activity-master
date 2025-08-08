@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <!-- fondo verde circulo-->
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/circle_green_background">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_check"
+            app:tint="#22C55E" />
+    </FrameLayout>
+
+    <!-- Título -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Venta Completada!"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Subtítulo -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="La venta se ha procesado exitosamente"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <!-- Tarjeta con información del total -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/card_green_background"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total procesado"
+            android:textSize="14sp"
+            android:textColor="#757575"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvTotalProcesado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$41.00"
+            android:textSize="24sp"
+            android:textColor="#22C55E"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+
+    </LinearLayout>
+
+    <!-- Botón de Aceptar -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAceptar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="Aceptar"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:minHeight="48dp"
+        android:minWidth="0dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        style="@style/Widget.Material3.Button"
+        app:cornerRadius="8dp"
+        app:backgroundTint="#3B82F6"
+        app:rippleColor="#1AFFFFFF"
+        />
+</LinearLayout>

@@ -47,9 +47,18 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation ("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation ("com.google.zxing:core:3.5.1")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0") // Para convertir JSON a objetos Java
     implementation ("com.squareup.okhttp3:okhttp:4.12.0") // Cliente HTTP para Retrofit
+
+    implementation ("androidx.camera:camera-core:1.3.0")
+    implementation ("androidx.camera:camera-camera2:1.3.0")
+    implementation ("androidx.camera:camera-lifecycle:1.3.0")
+    implementation ("androidx.camera:camera-view:1.3.0")
+    implementation ("androidx.camera:camera-extensions:1.3.0")
+    implementation ("com.google.mlkit:barcode-scanning:17.0.3")
 
 }

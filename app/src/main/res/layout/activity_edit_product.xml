@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content"
                 app:hintEnabled="false">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Nombre del producto"
@@ -98,6 +99,7 @@
                 android:layout_height="wrap_content"
                 app:hintEnabled="false">
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCodigo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Código del producto"
@@ -136,6 +138,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCantidad"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="0"/>
@@ -162,6 +165,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPrecio"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="$0"
@@ -210,7 +214,7 @@
 
             <!-- Botón Guardar -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRestablecerContrasena"
+                android:id="@+id/btnGuardarProducto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#1F41BB"

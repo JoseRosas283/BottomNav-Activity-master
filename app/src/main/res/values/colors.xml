@@ -26,5 +26,5 @@
     <color name="colorFondoInput">#F1F4FF</color>   <!-- fondo gris claro -->
     <color name="colorEnlace">#1F41BB</color>
     <color name="colorBoton">#1F41BB</color>
-
+    <color name="rojo_claro">#FF6B6B</color>
 </resources>
