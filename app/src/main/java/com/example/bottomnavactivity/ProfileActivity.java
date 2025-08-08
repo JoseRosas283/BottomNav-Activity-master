@@ -3,9 +3,13 @@ package com.example.bottomnavactivity;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private TextView tvNombre, tvCorreo;
     private MaterialButton btnCerrarSesion;
+    private ImageView imagePerfil;
     private UsuarioService service;
     private String usuarioId;
 
@@ -36,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvNombre = findViewById(R.id.tvNombre);
         tvCorreo = findViewById(R.id.tvCorreo);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        imagePerfil = findViewById(R.id.imagePerfil);
 
         LinearLayout EditProfile = findViewById(R.id.btnPerfil);
         LinearLayout Users = findViewById(R.id.btnUsuarios);
@@ -120,13 +126,45 @@ public class ProfileActivity extends AppCompatActivity {
             tvNombre.setText(usuario);
             tvCorreo.setText(correo);
 
+            cargarFotoPerfilGuardada();
+
             obtenerDatosActualizadosDelServidor(usuarioId);
         } else {
             tvNombre.setText("Usuario no logueado");
             tvCorreo.setText("No disponible");
 
+            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+
             Toast.makeText(this, "No hay usuario logueado", Toast.LENGTH_SHORT).show();
             redirigirAlLogin();
+        }
+    }
+
+    private void cargarFotoPerfilGuardada() {
+
+        if (usuarioId == null) {
+            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            return;
+        }
+
+        SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+        String encodedImage = prefs.getString("profile_image" + usuarioId, null);
+
+        if (encodedImage != null) {
+            try {
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                imagePerfil.setImageBitmap(decodedBitmap);
+                Log.d("ProfileActivity", "Foto de perfil cargada para usuario: " + usuarioId);
+            } catch (Exception e) {
+                Log.e("ProfileActivity", "Error al cargar imagen guardada: " + e.getMessage());
+                // Si hay error, mantener la imagen por defecto
+                imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            }
+        } else {
+            // Si no hay imagen guardada para este usuario, usar la imagen por defecto
+            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            Log.d("ProfileActivity", "No hay foto guardada para usuario: " + usuarioId);
         }
     }
 

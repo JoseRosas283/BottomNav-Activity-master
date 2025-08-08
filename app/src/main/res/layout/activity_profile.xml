@@ -6,46 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="center_vertical"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:layout_marginBottom="30dp"-->
-<!--        android:gravity="center_vertical"-->
-<!--        android:orientation="horizontal">-->
-
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:layout_width="50dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:backgroundTint="#F4F4F4"-->
-<!--            android:elevation="0dp"-->
-<!--            android:insetLeft="0dp"-->
-<!--            android:insetTop="0dp"-->
-<!--            android:insetRight="0dp"-->
-<!--            android:insetBottom="0dp"-->
-<!--            android:stateListAnimator="@null"-->
-<!--            app:cornerRadius="50dp"-->
-<!--            app:elevation="0dp"-->
-<!--            app:icon="@drawable/ic_arrow_left_black"-->
-<!--            app:iconGravity="textStart"-->
-<!--            app:iconPadding="0dp"-->
-<!--            app:iconSize="35dp"-->
-<!--            app:iconTint="#1E1E2D"-->
-<!--            app:rippleColor="#22000033" />-->
-
-<!--        <TextView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="40dp"-->
-<!--            android:layout_marginStart="130dp"-->
-<!--            android:gravity="center_vertical"-->
-<!--            android:text="Perfil"-->
-<!--            android:textColor="#000000"-->
-<!--            android:textSize="20sp"-->
-<!--            android:textStyle="bold" />-->
-
-<!--    </LinearLayout>-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

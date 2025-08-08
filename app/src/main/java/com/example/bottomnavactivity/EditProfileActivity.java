@@ -1,13 +1,27 @@
 package com.example.bottomnavactivity;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.bottomnavactivity.DTO.UsuarioGetResponse;
 import com.example.bottomnavactivity.DTO.UsuarioLoginDTO;
@@ -17,8 +31,14 @@ import com.example.bottomnavactivity.Services.ServiceClient;
 import com.example.bottomnavactivity.Services.UsuarioService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import retrofit2.Call;
@@ -29,8 +49,16 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private TextInputEditText etNombre, etCorreo, etNuevaClave, etConfNuevaClave;
     private MaterialButton btnGuardar, btnBackProfile;
+    private MaterialCardView cardPerfil;
+    private ImageView imagePerfil;
     private UsuarioService service;
     private String usuarioId;
+
+    // Para manejo de imágenes
+    private ActivityResultLauncher<Intent> galleryLauncher;
+    private ActivityResultLauncher<Intent> cameraLauncher;
+    private ActivityResultLauncher<String[]> permissionLauncher;
+    private static final int PERMISSION_REQUEST_CODE = 100;
 
 
     @Override
@@ -46,10 +74,26 @@ public class EditProfileActivity extends AppCompatActivity {
         etConfNuevaClave = findViewById(R.id.etConfNuevaClave);
         btnGuardar = findViewById(R.id.btnGuardar);
         btnBackProfile = findViewById(R.id.btnBackProfile);
+        cardPerfil = findViewById(R.id.cardPerfil);
+        imagePerfil = findViewById(R.id.imagePerfil);
 
         service = new ServiceClient().BuildRetrofitClient().create(UsuarioService.class);
 
+        // Configurar launchers para galería y cámara
+        setupImageLaunchers();
+        setupPermissionLauncher();
+
+        // Cargar foto de perfil guardada
+        cargarFotoPerfilGuardada();
+
         obtenerDatosUsuarioLogueado();
+
+        cardPerfil.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mostrarOpcionesFoto();
+            }
+        });
 
         btnBackProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +143,258 @@ public class EditProfileActivity extends AppCompatActivity {
 
             return false;
         });
+    }
+
+    private void setupImageLaunchers() {
+        // Launcher para galería
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Uri imageUri = result.getData().getData();
+                        if (imageUri != null) {
+                            procesarImagenSeleccionada(imageUri);
+                        }
+                    }
+                }
+        );
+
+        // Launcher para cámara
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        Bundle extras = result.getData().getExtras();
+                        if (extras != null) {
+                            Bitmap imageBitmap = (Bitmap) extras.get("data");
+                            if (imageBitmap != null) {
+                                imagePerfil.setImageBitmap(imageBitmap);
+                                guardarFotoPerfilEnSharedPreferences(imageBitmap);
+                            }
+                        }
+                    }
+                }
+        );
+    }
+
+    private void setupPermissionLauncher() {
+        permissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestMultiplePermissions(),
+                result -> {
+                    boolean allPermissionsGranted = true;
+                    for (Boolean granted : result.values()) {
+                        if (!granted) {
+                            allPermissionsGranted = false;
+                            break;
+                        }
+                    }
+
+                    if (allPermissionsGranted) {
+                        // Los permisos fueron otorgados, mostrar opciones de foto
+                        mostrarOpcionesFoto();
+                    } else {
+                        Toast.makeText(this, "Se necesitan permisos para cambiar la foto de perfil", Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+    }
+
+    private void mostrarOpcionesFoto() {
+        // Verificar permisos antes de mostrar opciones
+        if (!verificarTodosLosPermisos()) {
+            solicitarTodosLosPermisos();
+            return;
+        }
+
+        String[] opciones = {"Galería", "Cámara", "Cancelar"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Cambiar foto de perfil");
+        builder.setItems(opciones, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    abrirGaleria();
+                    break;
+                case 1:
+                    abrirCamara();
+                    break;
+                case 2:
+                    dialog.dismiss();
+                    break;
+            }
+        });
+        builder.show();
+    }
+
+    private boolean verificarTodosLosPermisos() {
+        List<String> permisosNecesarios = getPermisosNecesarios();
+        for (String permiso : permisosNecesarios) {
+            if (ContextCompat.checkSelfPermission(this, permiso) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void solicitarTodosLosPermisos() {
+        List<String> permisosNecesarios = getPermisosNecesarios();
+        List<String> permisosPorSolicitar = new ArrayList<>();
+
+        for (String permiso : permisosNecesarios) {
+            if (ContextCompat.checkSelfPermission(this, permiso) != PackageManager.PERMISSION_GRANTED) {
+                permisosPorSolicitar.add(permiso);
+            }
+        }
+
+        if (!permisosPorSolicitar.isEmpty()) {
+            permissionLauncher.launch(permisosPorSolicitar.toArray(new String[0]));
+        }
+    }
+
+    private List<String> getPermisosNecesarios() {
+        List<String> permisos = new ArrayList<>();
+
+        // Permiso para cámara
+        permisos.add(Manifest.permission.CAMERA);
+
+        // Permisos para galería según la versión de Android
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // API 33+
+            permisos.add(Manifest.permission.READ_MEDIA_IMAGES);
+        } else {
+            permisos.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+        return permisos;
+    }
+
+    private void abrirGaleria() {
+        if (verificarPermisosGaleria()) {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryLauncher.launch(intent);
+        } else {
+            solicitarTodosLosPermisos();
+        }
+    }
+
+    private void abrirCamara() {
+        if (verificarPermisosCamara()) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraLauncher.launch(intent);
+        } else {
+            solicitarTodosLosPermisos();
+        }
+    }
+
+    private boolean verificarPermisosGaleria() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                    == PackageManager.PERMISSION_GRANTED;
+        } else {
+            return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private boolean verificarPermisosCamara() {
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void procesarImagenSeleccionada(Uri imageUri) {
+        try {
+            InputStream imageStream = getContentResolver().openInputStream(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(imageStream);
+
+            // Redimensionar imagen para optimizar
+            Bitmap bitmapRedimensionado = redimensionarBitmap(bitmap, 300, 300);
+
+            imagePerfil.setImageBitmap(bitmapRedimensionado);
+            guardarFotoPerfilEnSharedPreferences(bitmapRedimensionado);
+
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+            Log.e("EditProfile", "Error al procesar imagen: " + e.getMessage());
+        }
+    }
+
+    private Bitmap redimensionarBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        float scaleWidth = ((float) maxWidth) / width;
+        float scaleHeight = ((float) maxHeight) / height;
+        float scaleFactor = Math.min(scaleWidth, scaleHeight);
+
+        int newWidth = Math.round(width * scaleFactor);
+        int newHeight = Math.round(height * scaleFactor);
+
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true);
+    }
+
+    private void guardarFotoPerfilEnSharedPreferences(Bitmap bitmap) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            byte[] byteArray = baos.toByteArray();
+            String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+            SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            // CAMBIO: Usar la misma clave que ProfileActivity
+            editor.putString("profile_image" + usuarioId, encodedImage);
+            editor.apply();
+
+            Toast.makeText(this, "Foto de perfil actualizada", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Log.e("EditProfile", "Error al guardar imagen: " + e.getMessage());
+        }
+    }
+
+    private void cargarFotoPerfilGuardada() {
+        if (usuarioId == null) {
+            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            return;
+        }
+
+        SharedPreferences prefs = getSharedPreferences("user_data", MODE_PRIVATE);
+        // CAMBIO: Usar la misma clave que ProfileActivity
+        String encodedImage = prefs.getString("profile_image" + usuarioId, null);
+
+        if (encodedImage != null) {
+            try {
+                byte[] decodedString = Base64.decode(encodedImage, Base64.DEFAULT);
+                Bitmap decodedBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                imagePerfil.setImageBitmap(decodedBitmap);
+            } catch (Exception e) {
+                Log.e("EditProfile", "Error al cargar imagen guardada: " + e.getMessage());
+                // Si hay error, mantener la imagen por defecto
+                imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+            }
+        } else {
+            // Si no hay imagen guardada, usar la imagen por defecto
+            imagePerfil.setImageResource(R.drawable.ic_avatar_img);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            boolean allPermissionsGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false;
+                    break;
+                }
+            }
+
+            if (allPermissionsGranted) {
+                mostrarOpcionesFoto();
+            } else {
+                Toast.makeText(this, "Se necesitan permisos para cambiar la foto de perfil", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void obtenerDatosUsuarioLogueado() {
