@@ -20,11 +20,11 @@
     <color name="colorAccento">#007AFF</color> <!-- texto interactivo como "Ver más" -->
 
     <color name="colorFondoInterfaz">#FFFFFF</color>
-    <color name="colorTitulo">#1F41BB</color>
+    <color name="colorTitulo">#0B70E0</color>
     <color name="colorSubtitulo">#000000</color>
-    <color name="colorBordeActivo">#1F41BB</color> <!-- morado por ejemplo -->
+    <color name="colorBordeActivo">#0B70E0</color> <!-- morado por ejemplo -->
     <color name="colorFondoInput">#F1F4FF</color>   <!-- fondo gris claro -->
-    <color name="colorEnlace">#1F41BB</color>
-    <color name="colorBoton">#1F41BB</color>
+    <color name="colorEnlace">#0B70E0</color>
+    <color name="colorBoton">#0B70E0</color>
     <color name="rojo_claro">#FF6B6B</color>
 </resources>

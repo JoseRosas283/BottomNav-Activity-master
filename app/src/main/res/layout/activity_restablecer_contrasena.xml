@@ -25,6 +25,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBackOlvidar"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:backgroundTint="#F4F4F4"
@@ -147,7 +148,7 @@
             android:id="@+id/btnRestablecerContrasena"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#1F41BB"
+            android:backgroundTint="#0B70E0"
             android:padding="16dp"
             android:text="Verificar cuenta"
             android:textAllCaps="false"

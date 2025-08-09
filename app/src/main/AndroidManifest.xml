@@ -71,7 +71,8 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="true" >
+        </activity>
         <activity android:name=".SearchActivity" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".ProfileActivity" />

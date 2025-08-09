@@ -25,7 +25,7 @@
         android:layout_margin="20dp"
         android:contentDescription="Agregar un nuevo producto"
         android:src="@drawable/ic_add"
-        app:backgroundTint="#1F41BB"
+        app:backgroundTint="#0B70E0"
         app:tint="@android:color/white" />
 
     <LinearLayout

@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -195,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 🔄 Llamada a la API para llenar la tabla
+        // Llamada a la API para llenar la tabla
         cargarProductosBajoStock();
     }
 
@@ -230,12 +231,15 @@ public class MainActivity extends AppCompatActivity {
         thNombre.setTypeface(Typeface.DEFAULT_BOLD);
         thNombre.setPadding(8, 8, 8, 8);
         thNombre.setTextColor(Color.BLACK); // 🖤 Texto negro
+        thNombre.setTextSize(17); // mas grande el texto
 
         TextView thCantidad = new TextView(this);
         thCantidad.setText("Cantidad");
         thCantidad.setTypeface(Typeface.DEFAULT_BOLD);
         thCantidad.setPadding(8, 8, 8, 8);
         thCantidad.setTextColor(Color.BLACK); // 🖤 Texto negro
+        thCantidad.setGravity(Gravity.END); // Alineamos el texto a la derecha
+        thCantidad.setTextSize(17); // mas grande el texto
 
         encabezado.addView(thNombre);
         encabezado.addView(thCantidad);
@@ -249,16 +253,19 @@ public class MainActivity extends AppCompatActivity {
                 TextView tvNombre = new TextView(this);
                 tvNombre.setText(p.getNombreProducto());
                 tvNombre.setPadding(8, 8, 8, 8);
-                tvNombre.setTextColor(Color.BLACK); // 🖤 Texto negro
+                tvNombre.setTextColor(Color.BLACK); // Texto negro
+                tvNombre.setTextSize(16); // mas grande el texto
 
                 TextView tvCantidad = new TextView(this);
                 int cantidad = p.getCantidad();
                 String textoCantidad = cantidad + (cantidad == 1 ? " pieza" : " piezas");
                 tvCantidad.setText(textoCantidad);
                 tvCantidad.setPadding(8, 8, 8, 8);
-                tvCantidad.setTextColor(Color.BLACK); // 🖤 Texto negro por defecto
+                tvCantidad.setTextColor(Color.BLACK); //  Texto negro por defecto
+                tvCantidad.setGravity(Gravity.END); // Alineamos el texto a la derecha
+                tvCantidad.setTextSize(16); // mas grade el texto
 
-                // 🔴 Resaltar si es crítico
+                // Resaltar si es crítico
                 if (cantidad == 1) {
                     tvCantidad.setTextColor(Color.RED);
                     tvCantidad.setTypeface(Typeface.DEFAULT_BOLD);

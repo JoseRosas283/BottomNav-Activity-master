@@ -63,7 +63,7 @@
             android:id="@+id/btnRestablecerContrasena"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="#1F41BB"
+            android:backgroundTint="#0B70E0"
             android:padding="16dp"
             android:text="Continuar"
             android:textAllCaps="false"
