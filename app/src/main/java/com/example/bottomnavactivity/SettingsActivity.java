@@ -10,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +57,10 @@ public class SettingsActivity extends AppCompatActivity {
     // Referencias para el estado vacío y resumen
     private View emptyStateLayout;
     private TextView tvSubtotal, tvTaxes, tvDiscount, tvTotal;
+
+    // MODIFIQUE LA FUNCION - AGREGUE REFERENCIAS PARA LA BARRA DE BUSQUEDA
+    private EditText editTextBuscar;
+    private ImageView iconoCerrar;
 
     // Servicios
     ProductoVentaService productoVentaService;
@@ -106,6 +112,10 @@ public class SettingsActivity extends AppCompatActivity {
         tvDiscount = findViewById(R.id.tvDiscount);
         tvTotal = findViewById(R.id.tvTotal);
 
+        // MODIFIQUE LA FUNCION - INICIALIZAR REFERENCIAS DE BUSQUEDA
+        editTextBuscar = findViewById(R.id.etSearch);
+        iconoCerrar = findViewById(R.id.iconoCerrar);
+
         setupBottomNavigation(bottomNavigationView);
         setupSearchButton();
         setupFinalizarVentaButton();
@@ -143,13 +153,46 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void setupSearchButton() {
-        EditText editTextBuscar = findViewById(R.id.etSearch);
-        ImageView iconoCerrar = findViewById(R.id.iconoCerrar);
+        // MODIFIQUE LA FUNCION - IMPLEMENTACION COMPLETA DE LA BARRA DE BUSQUEDA
 
+        // Configurar el TextWatcher para la búsqueda en tiempo real
+        editTextBuscar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No necesitamos implementar nada aquí
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Filtrar productos mientras el usuario escribe
+                String query = s.toString().trim();
+                productoVentaAdapter.filtrarProductos(query);
+
+                // Mostrar/ocultar el ícono de cerrar según si hay texto
+                if (query.isEmpty()) {
+                    iconoCerrar.setVisibility(View.GONE);
+                } else {
+                    iconoCerrar.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No necesitamos implementar nada aquí
+            }
+        });
+
+        // Configurar el botón de limpiar búsqueda
         iconoCerrar.setOnClickListener(v -> {
             editTextBuscar.getText().clear();
             editTextBuscar.clearFocus();
+            // Limpiar el filtro para mostrar todos los productos
+            productoVentaAdapter.limpiarFiltro();
+            iconoCerrar.setVisibility(View.GONE);
         });
+
+        // Inicialmente ocultar el ícono de cerrar
+        iconoCerrar.setVisibility(View.GONE);
     }
 
     private void setupFinalizarVentaButton() {
@@ -239,6 +282,13 @@ public class SettingsActivity extends AppCompatActivity {
                             if (emptyStateLayout.getVisibility() == View.VISIBLE) {
                                 emptyStateLayout.setVisibility(View.GONE);
                                 recyclerView.setVisibility(View.VISIBLE);
+                            }
+
+                            // MODIFIQUE LA FUNCION - LIMPIAR LA BUSQUEDA AL AGREGAR UN PRODUCTO
+                            if (!editTextBuscar.getText().toString().trim().isEmpty()) {
+                                editTextBuscar.getText().clear();
+                                productoVentaAdapter.limpiarFiltro();
+                                iconoCerrar.setVisibility(View.GONE);
                             }
 
                         } else {
@@ -534,6 +584,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         totalVenta = 0.0;
         actualizarResumen();
+
+        // MODIFIQUE LA FUNCION - LIMPIAR LA BUSQUEDA AL FINALIZAR VENTA
+        editTextBuscar.getText().clear();
+        productoVentaAdapter.limpiarFiltro();
+        iconoCerrar.setVisibility(View.GONE);
     }
 
     private void actualizarResumen() {

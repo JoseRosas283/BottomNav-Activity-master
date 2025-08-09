@@ -17,14 +17,17 @@ import com.example.bottomnavactivity.Models.ProductoModel;
 import com.example.bottomnavactivity.R;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdapter.ProductoViewHolder> {
     private List<ProductoModel> productos;
+    private List<ProductoModel> productosFiltrados;
     private Runnable onCambioCallback;
 
     public ProductoVentaAdapter(List<ProductoModel> productos) {
         this.productos = productos;
+        this.productosFiltrados = new ArrayList<>(productos);
     }
 
     public void setOnCambioCallback(Runnable callback) {
@@ -40,7 +43,8 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
 
     @Override
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
-        ProductoModel producto = productos.get(position);
+        // MODIFIQUE LA FUNCION - USAR PRODUCTOS FILTRADOS EN LUGAR DE LA LISTA ORIGINAL
+        ProductoModel producto = productosFiltrados.get(position);
 
         holder.tvNombre.setText(producto.getNombreProducto());
         holder.tvPrecio.setText("$" + producto.getPrecio());
@@ -77,6 +81,7 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
         holder.btnEliminar.setOnClickListener(v -> {
             int posicionActual = holder.getAdapterPosition();
             if (posicionActual != RecyclerView.NO_POSITION) {
+                // MODIFIQUE LA FUNCION - ELIMINAR DE AMBAS LISTAS
                 eliminarProducto(posicionActual);
             }
         });
@@ -131,12 +136,14 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
 
     @Override
     public int getItemCount() {
-        return productos.size();
+        // MODIFIQUE LA FUNCION - RETORNAR TAMAÑO DE PRODUCTOS FILTRADOS
+        return productosFiltrados.size();
     }
 
     public BigDecimal calcularTotal() {
         BigDecimal total = BigDecimal.ZERO;
 
+        // MODIFIQUE LA FUNCION - CALCULAR TOTAL BASADO EN LA LISTA ORIGINAL, NO LA FILTRADA
         for (int i = 0; i < productos.size(); i++) {
             ProductoModel producto = productos.get(i);
             if (producto.getPrecio() != null && producto.getCantidad() > 0) {
@@ -166,7 +173,9 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
         // SI NO HAY CODIGO AGREGAR DIRECTO YA SEA PORQUE EL USUARIO PUSO LA CANTIDAD O LE CAMBIO CON LOS BOTONES
         if (nuevo.getCodigoProducto() == null || nuevo.getCodigoProducto().trim().isEmpty()) {
             productos.add(nuevo);
-            notifyItemInserted(productos.size() - 1);
+            // MODIFIQUE LA FUNCION - TAMBIEN AGREGAR A LA LISTA FILTRADA
+            productosFiltrados.add(nuevo);
+            notifyItemInserted(productosFiltrados.size() - 1);
             ejecutarCallback();
             return;
         }
@@ -180,7 +189,14 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
 
                 // SI YA EXISTE SOLO SUMALE 1
                 existente.setCantidad(existente.getCantidad() + 1);
-                notifyItemChanged(i);
+
+                // MODIFIQUE LA FUNCION - BUSCAR EN LISTA FILTRADA Y ACTUALIZAR SI EXISTE
+                for (int j = 0; j < productosFiltrados.size(); j++) {
+                    if (productosFiltrados.get(j) == existente) {
+                        notifyItemChanged(j);
+                        break;
+                    }
+                }
                 ejecutarCallback();
                 return;
             }
@@ -188,20 +204,29 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
 
         // SI NO EXISTE AGREGA UNO NUEVO
         productos.add(nuevo);
-        notifyItemInserted(productos.size() - 1);
+        // MODIFIQUE LA FUNCION - TAMBIEN AGREGAR A LA LISTA FILTRADA
+        productosFiltrados.add(nuevo);
+        notifyItemInserted(productosFiltrados.size() - 1);
         ejecutarCallback();
     }
 
     // METODO PARA ELIMINAR PRODUCTO
     public void eliminarProducto(int position) {
-        if (position >= 0 && position < productos.size()) {
+        if (position >= 0 && position < productosFiltrados.size()) {
 
-            productos.remove(position);
+            // MODIFIQUE LA FUNCION - OBTENER EL PRODUCTO DE LA LISTA FILTRADA
+            ProductoModel productoAEliminar = productosFiltrados.get(position);
+
+            // MODIFIQUE LA FUNCION - ELIMINAR DE LA LISTA ORIGINAL
+            productos.remove(productoAEliminar);
+
+            // MODIFIQUE LA FUNCION - ELIMINAR DE LA LISTA FILTRADA
+            productosFiltrados.remove(position);
             notifyItemRemoved(position);
 
             // ACTUALIZAR POSICIONES
-            if (position < productos.size()) {
-                notifyItemRangeChanged(position, productos.size() - position);
+            if (position < productosFiltrados.size()) {
+                notifyItemRangeChanged(position, productosFiltrados.size() - position);
             }
 
             ejecutarCallback();
@@ -220,6 +245,34 @@ public class ProductoVentaAdapter extends RecyclerView.Adapter<ProductoVentaAdap
             }
         }
         return 1; // Valor por defecto si no se encuentra el producto
+    }
+
+    // MODIFIQUE LA FUNCION - METODO PARA FILTRAR PRODUCTOS
+    public void filtrarProductos(String query) {
+        productosFiltrados.clear();
+
+        if (query == null || query.trim().isEmpty()) {
+            // Si no hay texto de búsqueda, mostrar todos los productos
+            productosFiltrados.addAll(productos);
+        } else {
+            // Filtrar productos que contengan el texto de búsqueda
+            String queryLowerCase = query.toLowerCase().trim();
+            for (ProductoModel producto : productos) {
+                if (producto.getNombreProducto() != null &&
+                        producto.getNombreProducto().toLowerCase().contains(queryLowerCase)) {
+                    productosFiltrados.add(producto);
+                }
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
+    // MODIFIQUE LA FUNCION - METODO PARA LIMPIAR FILTRO
+    public void limpiarFiltro() {
+        productosFiltrados.clear();
+        productosFiltrados.addAll(productos);
+        notifyDataSetChanged();
     }
 
     static class ProductoViewHolder extends RecyclerView.ViewHolder {
